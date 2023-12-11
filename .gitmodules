@@ -1,0 +1,6 @@
+[submodule "messaging"]
+	path = messaging
+	url = https://github.com/miyakz1192/advsvc_messaging.git
+[submodule "db"]
+	path = db
+	url = https://github.com/miyakz1192/advsvc_db.git

@@ -1,0 +1,12 @@
+[Unit]
+Description=Advice Service Controller(audio2text)
+
+[Service]
+ExecStart=/home/miyakz/advsvc_controller/boot_audio2text.sh
+Restart=always
+User=miyakz
+
+[Install]
+WantedBy=multi-user.target
+
+

@@ -41,9 +41,8 @@ def main():
 
     # 結果の表示
     print(r.id, r.status, r.audio2text, r.text2advice)
-    if(r.status == DialogRecord.Status.TEXT2ADVICE_START):
-        temp_uuid = r.uuid
-        temp_in_text = r.audio2text
+    temp_uuid = r.uuid
+    temp_in_text = r.audio2text
     session.close()
 
     # transform rec

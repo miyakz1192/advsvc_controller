@@ -38,9 +38,11 @@ dbquery.init_and_connect(engine)
 
 advice_texts = []
 for r in dbquery.find_by_day(DialogRecord, args.year, args.month, args.day):
-    a2t = r.audio2text[:30].replace("\n","")
-    print(f"{r.id},{r.timestamp},{a2t}")
-    advice_texts.append(r.audio2text)
+    t2a = None
+    if r.text2advice is not None:
+        t2a = r.text2advice[:30].replace("\n","")
+    print(f"{r.id},{r.timestamp},{t2a}")
+    advice_texts.append(r.text2advice)
 
 rec = Advice2SummaryRecord(ident=None,
                            advice_texts=advice_texts,

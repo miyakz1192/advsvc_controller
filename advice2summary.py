@@ -44,7 +44,14 @@ for r in dbquery.find_by_day(DialogRecord, args.year, args.month, args.day):
     print(f"{r.id},{r.timestamp},{t2a}")
     advice_texts.append(r.text2advice)
 
-rec = Advice2SummaryRecord(ident=None,
+session = dbquery.create_session()
+sr = SummaryRecord()
+temp_uuid = sr.uuid
+session.add_all([sr])
+session.commit()
+session.close()
+
+rec = Advice2SummaryRecord(ident=temp_uuid,
                            advice_texts=advice_texts,
                            summary_text=None)
 

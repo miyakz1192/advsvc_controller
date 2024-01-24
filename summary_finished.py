@@ -23,19 +23,17 @@ sleep_sec = 10
 while True:
     print("TRACE: work one")
 
-    rec1 = Text2AdviceServiceResMessaging().connect_and_basic_get_record()
+    rec1 = Advice2SummaryServiceResMessaging().connect_and_basic_get_record()
     if rec1 is None:
         print("TRACE: no data in queue skip this operation. goto next")
         time.sleep(sleep_sec)
         continue
 
-    dr = dbquery.find_one_by(DialogRecord, {"uuid": rec1.id})
+    r = dbquery.find_one_by(SummaryRecord, {"uuid": rec1.id})
     session = dbquery.create_session()
-    params = {"status": DialogRecord.Status.TEXT2ADVICE_END,
-              "text2advice": rec1.advice_text,
-              "text2advice_full": rec1.advice_text_full}
-    dbquery.update_one_by_id(tgtcls=DialogRecord, ident=dr.id, params=params)
-    print(f"TRACE: dr.text2advice={dr.text2advice}")
+    params = {"advice2summary": rec1.summary_text}
+    dbquery.update_one_by_id(tgtcls=SummaryRecord, ident=r.id, params=params)
+    print(f"TRACE: r.advice2summary{r.advice2summary}")
     session.commit()
     session.close()
 

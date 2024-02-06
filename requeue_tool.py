@@ -40,6 +40,40 @@ def requeue_text2advice(recid):
     Text2AdviceServiceReqMessaging().connect_and_basic_publish_record(rec2)
     print("INFO: End")
 
+
+def requeue_advice2summary(recid):
+    print("INFO: requeue target(advice2summary)")
+    session = dbquery.create_session()
+    r = dbquery.find_one_by_id(SummaryRecord, recid)
+
+    if r is None:
+        print(f"INFO: record is not found {id}")
+        return
+
+    # 結果の表示
+    print(r.id, r.advice2summary, t.timestamp)
+    temp_uuid = r.uuid
+
+    advice_texts = []
+    year = r.timestamp.year
+    month = r.timestamp.month
+    day = r.timestamp.day
+    for r in dbquery.find_by_day(DialogRecord, year, month, day):
+        t2a = None
+        if r.text2advice is not None:
+            t2a = r.text2advice[:30].replace("\n","")
+        print(f"{r.id},{r.timestamp},{t2a}")
+        advice_texts.append(r.text2advice)
+    session.close()
+
+    rec = Advice2SummaryRecord(ident=temp_uuid,
+                               advice_texts=advice_texts,
+                               summary_text=None)
+    
+    Advice2SummaryServiceReqMessaging().connect_and_basic_publish_record(rec)
+    print("INFO: End(advice2summary)")
+
+
 def requeue_record(wav):
     with open(wav, 'rb') as file:
         # ファイルから全体のバイトデータを読み込む
@@ -56,6 +90,7 @@ def main():
     
     # ロングオプション
     parser.add_argument('--recid', type=int, help='record id(text2advice)')
+    parser.add_argument('--recida2s', type=int, help='record id(advice2summary)')
     parser.add_argument('--wav', type=str, help='wav file to record')
 
     args = parser.parse_args()
@@ -63,6 +98,11 @@ def main():
     if args.recid is not None:
         print("INFO: text2advice")
         requeue_text2advice(args.recid)
+        return
+
+    if args.recida2s is not None:
+        print("INFO: advice2summary")
+        requeue_text2advice(args.recida2s)
         return
 
     if args.wav is not None:

@@ -41,6 +41,31 @@ def requeue_text2advice(recid):
     print("INFO: End")
 
 
+def requeue_audio2text(recid):
+    print("INFO: requeue target")
+    session = dbquery.create_session()
+    r = dbquery.find_one_by_id(DialogRecord, recid)
+
+    if r is None:
+        print(f"INFO: record is not found {id}")
+        return
+
+    # 結果の表示
+    print(r.id, r.status, r.audio2text, r.text2advice)
+    temp_uuid = r.uuid
+    temp_raw_audio_byte = r.raw_audio
+    session.close()
+
+    # transform rec
+    rec2 = Audio2TextRecord(temp_uuid, temp_raw_audio_byte, "")
+    rec2.timestamp = datetime.datetime.today()
+
+    Audio2TextServiceReqMessaging().connect_and_basic_publish_record(rec2)
+
+    print("INFO: End")
+
+
+
 def requeue_advice2summary(recid):
     print("INFO: requeue target(advice2summary)")
     session = dbquery.create_session()
@@ -91,6 +116,7 @@ def main():
     # ロングオプション
     parser.add_argument('--recid', type=int, help='record id(text2advice)')
     parser.add_argument('--recida2s', type=int, help='record id(advice2summary)')
+    parser.add_argument('--recida2t', type=int, help='record id(audio2text)')
     parser.add_argument('--wav', type=str, help='wav file to record')
 
     args = parser.parse_args()
@@ -103,6 +129,11 @@ def main():
     if args.recida2s is not None:
         print("INFO: advice2summary")
         requeue_advice2summary(args.recida2s)
+        return
+
+    if args.recida2t is not None:
+        print("INFO: audio2text")
+        requeue_audio2text(args.recida2t)
         return
 
     if args.wav is not None:

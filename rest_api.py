@@ -77,9 +77,22 @@ def run_shell_command(shell_command):
     result = subprocess.run(shell_command, shell=True, check=True, stdout=subprocess.PIPE)
     return result.stdout.decode('utf-8')
 
+
 @app.route("/operations/requeue/all/")
 def operations_requeue_all():
     res = run_shell_command("bash -c \"cd ~ ; pwd ; ./requeue_ope_advice.sh ; ./requeue_ope_whisper.sh\"")
+    return make_response(res)
+
+
+@app.route("/operations/requeue/advice/")
+def operations_requeue_advice():
+    res = run_shell_command("bash -c \"cd ~ ; pwd ; ./requeue_ope_advice.sh \"")
+    return make_response(res)
+
+
+@app.route("/operations/requeue/whisper/")
+def operations_requeue_whisper():
+    res = run_shell_command("bash -c \"cd ~ ; pwd ; ./requeue_ope_whisper.sh\"")
     return make_response(res)
 
 

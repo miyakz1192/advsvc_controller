@@ -51,7 +51,7 @@ def requeue_advice2summary(recid):
         return
 
     # 結果の表示
-    print(r.id, r.advice2summary, t.timestamp)
+    print(r.id, r.advice2summary, r.timestamp)
     temp_uuid = r.uuid
 
     advice_texts = []
@@ -102,7 +102,7 @@ def main():
 
     if args.recida2s is not None:
         print("INFO: advice2summary")
-        requeue_text2advice(args.recida2s)
+        requeue_advice2summary(args.recida2s)
         return
 
     if args.wav is not None:

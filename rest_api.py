@@ -3,6 +3,7 @@
 
 import sys
 import json
+import subprocess
 
 from flask import Flask
 from flask import make_response
@@ -69,6 +70,17 @@ def get_summaries(year, month, day):
         create_advice2summary(year, month, day)
     print(f"INFO: end of get_summaries")
     return response
+
+
+# シェルコマンドを実行し、標準出力を得る
+def run_shell_command(shell_command):
+    result = subprocess.run(shell_command, shell=True, check=True, stdout=subprocess.PIPE)
+    return result.stdout.decode('utf-8')
+
+@app.route("/operations/requeue/all/")
+def operations_requeue_all():
+    res = run_shell_command("bash -c \"cd ~ ; pwd ; ./requeue_ope_advice.sh ; ./requeue_ope_whisper.sh\"")
+    return make_response(res)
 
 
 app.run(host="0.0.0.0", port=8080, debug=True)
